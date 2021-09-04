@@ -3,6 +3,7 @@ using Stylet;
 using System;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using WDBXLib.Definitions.WotLK;
@@ -47,17 +48,34 @@ namespace CreatureDisplayCreator.Pages
                 return;
             }
 
-            var modelId = _creatureModelDataDbc.Rows[_creatureModelDataDbc.Rows.Count - 1].ID + 1;
+            var creatureModelName = DirNameSameAsModelName ? @$"creature\{ModelName}\{ModelName}.m2" : $"{ModelName}.m2";
 
-            var creatureModelData = new CreatureModelData
+            var creatureModelData = _creatureModelDataDbc.Rows
+                .Where(q => q.ModelName == creatureModelName)
+                .FirstOrDefault();
+
+            var modelId = 0;
+
+            if (creatureModelData is not null)
             {
-                ID = modelId,
-                Flags = 0,
-                ModelName = DirNameSameAsModelName ? @$"creature\{ModelName}\{ModelName}.m2" : $"{ModelName}.m2",
-                ModelScale = 1
-            };
+                modelId = creatureModelData.ID;
+            }
+            else
+            {
+                modelId = _creatureModelDataDbc.Rows[_creatureModelDataDbc.Rows.Count - 1].ID + 1;
 
-            _creatureModelDataDbc.Rows.Add(creatureModelData);
+                creatureModelData = new CreatureModelData
+                {
+                    ID = modelId,
+                    Flags = 0,
+                    ModelName = DirNameSameAsModelName ? @$"creature\{ModelName}\{ModelName}.m2" : $"{ModelName}.m2",
+                    ModelScale = 1
+                };
+
+                _creatureModelDataDbc.Rows.Add(creatureModelData);
+
+                DBReader.Write(_creatureModelDataDbc, _creatureModelDataDbcPath);
+            }
 
             var displayInfoId = _creatureDisplayInfoDbc.Rows[_creatureDisplayInfoDbc.Rows.Count - 1].ID + 1;
 
@@ -73,7 +91,6 @@ namespace CreatureDisplayCreator.Pages
 
             _creatureDisplayInfoDbc.Rows.Add(creatureDisplayInfo);
 
-            DBReader.Write(_creatureModelDataDbc, _creatureModelDataDbcPath);
             DBReader.Write(_creatureDisplayInfoDbc, _creatureDisplayInfoDbcPath);
 
             using var conn = new MySqlConnection(_dbConnectionString);
