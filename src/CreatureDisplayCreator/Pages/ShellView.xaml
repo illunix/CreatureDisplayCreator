@@ -1,0 +1,40 @@
+﻿<Window x:Class="CreatureDisplayCreator.Pages.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:s="https://github.com/canton7/Stylet"
+        xmlns:local="clr-namespace:CreatureDisplayCreator.Pages"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance local:ShellViewModel}"
+        Title="Creature Display Creator" Height="400" Width="400"  ResizeMode="CanMinimize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <GroupBox Grid.Row="0" Header="Creature Model Data" Margin="10" Padding="10">
+            <StackPanel>
+                <TextBlock>Model Name:</TextBlock>
+                <TextBox Text="{Binding ModelName}"></TextBox>
+                <CheckBox Content="Directory name same as model name" IsChecked="{Binding DirNameSameAsModelName}"></CheckBox>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Header="Creature Display Info" Margin="10" Padding="10">
+            <StackPanel>
+                <TextBlock>Model Scale:</TextBlock>
+                <TextBox Text="{Binding ModelScale}"></TextBox>
+                <TextBlock>Texture Variation 1:</TextBlock>
+                <TextBox Text="{Binding TextureVariation_1}"></TextBox>
+                <TextBlock>Texture Variation 2:</TextBlock>
+                <TextBox Text="{Binding TextureVariation_2}"></TextBox>
+                <TextBlock>Texture Variation 3:</TextBlock>
+                <TextBox Text="{Binding TextureVariation_3}"></TextBox>
+                <CheckBox Content="Extended"></CheckBox>
+            </StackPanel>
+        </GroupBox>
+        <Button Grid.Row="2" Margin="297,0,10,-22" Command="{s:Action Add}">Add</Button>
+    </Grid>
+</Window>
