@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using CreatureDisplayCreator.Infrastructure.Models;
 
 namespace CreatureDisplayCreator
 {
