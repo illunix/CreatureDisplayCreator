@@ -1,4 +1,6 @@
-﻿using MySql.Data.MySqlClient;
+﻿using CreatureDisplayCreator.Infrastructure.Data;
+using CreatureDisplayCreator.Infrastructure.Entities;
+using Microsoft.Extensions.Configuration;
 using Stylet;
 using System;
 using System.Configuration;
@@ -15,7 +17,9 @@ namespace CreatureDisplayCreator.Pages
     public partial class ShellViewModel : Screen
     {
         private readonly IWindowManager _windowManager;
-        private string _dbConnectionString;
+        private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
+
         private string _creatureModelDataDbcPath;
         private string _creatureDisplayInfoDbcPath;
         private DBEntry<CreatureModelData> _creatureModelDataDbc;
@@ -28,11 +32,9 @@ namespace CreatureDisplayCreator.Pages
         public string TextureVariation_3 { get; set; } = "";
         public bool DirNameSameAsModelName { get; set; } = true;
 
-        public ShellViewModel(IWindowManager windowManager)
+        protected override void OnViewLoaded()
         {
-            _windowManager = windowManager;
-            _dbConnectionString = ConfigurationManager.AppSettings.Get("DbConnectionString");
-            var dbcPath = ConfigurationManager.AppSettings.Get("DbcPath");
+            var dbcPath = _configuration["dbcPath"];
 
             _creatureModelDataDbcPath = Path.Combine(dbcPath, "CreatureModelData.dbc");
             _creatureModelDataDbc = DBReader.Read<CreatureModelData>(_creatureModelDataDbcPath);
@@ -93,18 +95,14 @@ namespace CreatureDisplayCreator.Pages
 
             DBReader.Write(_creatureDisplayInfoDbc, _creatureDisplayInfoDbcPath);
 
-            using var conn = new MySqlConnection(_dbConnectionString);
+            var creatureModelInfo = new CreatureModelInfo(displayInfoId);
 
-            await conn.OpenAsync();
+            _context.CreatureModelInfos
+                .Add(creatureModelInfo);
 
-            using var command = conn.CreateCommand();
+            await _context.SaveChangesAsync();
 
-            command.CommandText = "INSERT INTO `creature_model_info` VALUES (@ID, 0, 0, 2, 0);";
-            command.Parameters.AddWithValue("@ID", displayInfoId);
-
-            await command.ExecuteNonQueryAsync();
-
-            await conn.CloseAsync();
+            Clipboard.SetText(displayInfoId.ToString());
 
             _windowManager.ShowMessageBox(displayInfoId.ToString());
         }
