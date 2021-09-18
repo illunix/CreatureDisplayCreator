@@ -75,8 +75,6 @@ namespace CreatureDisplayCreator.Pages
                 };
 
                 _creatureModelDataDbc.Rows.Add(creatureModelData);
-
-                DBReader.Write(_creatureModelDataDbc, _creatureModelDataDbcPath);
             }
 
             var displayInfoId = _creatureDisplayInfoDbc.Rows[_creatureDisplayInfoDbc.Rows.Count - 1].ID + 1;
@@ -93,7 +91,6 @@ namespace CreatureDisplayCreator.Pages
 
             _creatureDisplayInfoDbc.Rows.Add(creatureDisplayInfo);
 
-            DBReader.Write(_creatureDisplayInfoDbc, _creatureDisplayInfoDbcPath);
 
             var creatureModelInfo = new CreatureModelInfo(displayInfoId);
 
@@ -101,6 +98,13 @@ namespace CreatureDisplayCreator.Pages
                 .Add(creatureModelInfo);
 
             await _context.SaveChangesAsync();
+
+            DBReader.Write(_creatureDisplayInfoDbc, _creatureDisplayInfoDbcPath);
+
+            if (creatureModelData is null)
+            {
+                DBReader.Write(_creatureModelDataDbc, _creatureModelDataDbcPath);
+            }
 
             Clipboard.SetText(displayInfoId.ToString());
 

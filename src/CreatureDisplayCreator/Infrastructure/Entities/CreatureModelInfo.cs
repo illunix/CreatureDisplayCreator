@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace CreatureDisplayCreator.Infrastructure.Entities
 {
     public record CreatureModelInfo(
-        int ModelId
+        int DisplayId
     );
 }

@@ -23,7 +23,7 @@ namespace CreatureDisplayCreator.Infrastructure.Data
 
             builder.Entity<CreatureModelInfo>()
                 .ToTable("creature_model_info")
-                .HasKey(q => q.ModelId);
+                .HasKey(q => q.DisplayId);
         }
     }
 }
